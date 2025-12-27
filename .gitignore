@@ -1,68 +1,56 @@
-# IDE and Editor
-.vscode/
-.idea/
-*.swp
-*.swo
+############################
+# OS files
+############################
 .DS_Store
+Thumbs.db
+
+############################
+# IDEs & Editors
+############################
+.idea/
+*.iml
+.vscode/
 .project
 .classpath
-.c9/
-*.launch
 .settings/
-*.sublime-workspace
+.factorypath
 
-# Java/Maven
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!.mvn/wrapper/maven-wrapper.properties
-.mvn/wrapper/
+############################
+# Java / Spring Boot
+############################
 *.class
+*.log
 *.jar
 *.war
-*.nar
 *.ear
-*.zip
-*.tar.gz
-*.rar
+
+############################
+# Maven
+############################
+target/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
-pom.xml.bak
+pom.xml.next
 release.properties
 dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
+.buildNumber
 
-# Node/npm (Angular)
+############################
+# Gradle
+############################
+.gradle/
+build/
+
+############################
+# Angular / Node
+############################
 node_modules/
-npm-debug.log
-yarn-error.log
-yarn-debug.log
-package-lock.json
-dist/
-build/
-out-tsc/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
-# Angular
-.angular/
-angular-ide.log
-
-# OS
-Thumbs.db
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Misc
-.env
-.env.local
-.env.*.local
-*.log
-*.sqlite
-*.sqlite3
-
-# Build artifacts
-dist/
-build/
-out/
+############################
+# Angular build output
+#########################
