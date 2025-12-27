@@ -1,0 +1,245 @@
+/* Professional Budgeting Screen Styling */
+
+.budgeting-container {
+  padding: 2rem 0;
+  background: linear-gradient(135deg, #f5f7fa 0%, #f0f3f7 100%);
+  min-height: 100vh;
+}
+
+/* Page Header */
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1a5490;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.page-subtitle {
+  font-size: 1rem;
+  color: #6c757d;
+  margin: 0;
+  margin-left: 2.5rem;
+}
+
+/* Cards */
+.form-card,
+.table-card {
+  border: none;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.form-card:hover,
+.table-card:hover {
+  box-shadow: 0 8px 24px rgba(26, 84, 144, 0.15) !important;
+  transform: translateY(-2px);
+}
+
+/* Card Headers */
+.card-header.bg-gradient {
+  background: linear-gradient(135deg, #1a5490 0%, #2d7ec1 100%);
+  border: none;
+  padding: 1.25rem;
+}
+
+.card-header .card-title {
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* Form Elements */
+.form-label {
+  font-weight: 600;
+  color: #1a5490;
+  margin-bottom: 0.6rem;
+  display: flex;
+  align-items: center;
+}
+
+.form-select-custom,
+.form-control-custom {
+  border: 2px solid #e0e0e0;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.form-select-custom:focus,
+.form-control-custom:focus {
+  border-color: #1a5490;
+  box-shadow: 0 0 0 0.2rem rgba(26, 84, 144, 0.15);
+  outline: none;
+}
+
+.form-select-custom {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%231a5490' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px 12px;
+  padding-right: 2.5rem;
+}
+
+/* Input Group */
+.input-group-text {
+  background-color: #f0f3f7;
+  border: 2px solid #e0e0e0;
+  color: #1a5490;
+  font-weight: 600;
+}
+
+.input-group .form-control-custom {
+  border-left: none;
+}
+
+/* Buttons */
+.btn-custom {
+  background: linear-gradient(135deg, #1a5490 0%, #2d7ec1 100%);
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(26, 84, 144, 0.25);
+}
+
+.btn-custom:hover {
+  background: linear-gradient(135deg, #0d3a66 0%, #1a5490 100%);
+  box-shadow: 0 6px 16px rgba(26, 84, 144, 0.35);
+  transform: translateY(-2px);
+}
+
+.btn-custom:active {
+  transform: translateY(0);
+}
+
+/* Alert Styling */
+.alert-success {
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+  border-radius: 0.5rem;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+  border-radius: 0.5rem;
+}
+
+/* Table Styling */
+.table-custom {
+  border-collapse: collapse;
+  margin-bottom: 0;
+}
+
+.table-custom thead {
+  background-color: #f0f3f7;
+  border-bottom: 2px solid #1a5490;
+}
+
+.table-custom thead th {
+  font-weight: 700;
+  color: #1a5490;
+  padding: 1rem;
+  border: none;
+  font-size: 0.95rem;
+}
+
+.table-custom tbody tr {
+  border-bottom: 1px solid #e0e0e0;
+  transition: background-color 0.2s ease;
+}
+
+.table-custom tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.table-custom tbody td {
+  padding: 1rem;
+  vertical-align: middle;
+  color: #333;
+}
+
+.table-row-hover {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Text Colors */
+.text-primary {
+  color: #1a5490 !important;
+}
+
+.fw-500 {
+  font-weight: 500;
+}
+
+.fw-600 {
+  font-weight: 600;
+}
+
+/* Empty State */
+.opacity-50 {
+  opacity: 0.5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+  .page-title {
+    font-size: 2rem;
+  }
+
+  .page-subtitle {
+    margin-left: 2rem;
+  }
+
+  .row.g-4 > div {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .budgeting-container {
+    padding: 1rem 0;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .page-subtitle {
+    font-size: 0.85rem;
+    margin-left: 2rem;
+  }
+
+  .card-header.bg-gradient {
+    padding: 1rem;
+  }
+
+  .form-label {
+    font-size: 0.9rem;
+  }
+
+  .table-custom thead th,
+  .table-custom tbody td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .btn-custom {
+    font-size: 0.9rem;
+    padding: 0.7rem 1rem;
+  }
+}
+

@@ -1,0 +1,114 @@
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom shadow-sm">
+  <div class="container-fluid">
+    <!-- Brand with logo icon -->
+    <a class="navbar-brand fw-bold" routerLink="/" title="Go to Home">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-wallet2 me-2" viewBox="0 0 16 16" style="display: inline;">
+        <path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499L12.136.326zM5.562 3H2v10h12V4.5a.5.5 0 0 0-.5-.5H5.562z"/>
+        <path d="M16 12.5v-9a.5.5 0 0 0-.5-.5h-4v5h4.5a.5.5 0 0 1 0 1h-4.5v2h4a.5.5 0 0 0 .5-.5z"/>
+      </svg>
+      <span>BudgetTracker</span>
+    </a>
+
+    <!-- Mobile toggle button -->
+    <button
+      class="navbar-toggler border-0"
+      type="button"
+      (click)="toggle()"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div [class.collapse]="collapsed" class="navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link fw-500" routerLink="/budgeting" routerLinkActive="active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-1" viewBox="0 0 16 16" style="display: inline;">
+              <path d="M0 1a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H0zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+            </svg>
+            Budgeting
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link fw-500" routerLink="/create-budget" routerLinkActive="active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-1" viewBox="0 0 16 16" style="display: inline;">
+              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+            </svg>
+            Create Budget
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link fw-500" routerLink="/expenses" routerLinkActive="active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-1" viewBox="0 0 16 16" style="display: inline;">
+              <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+            </svg>
+            Expenses
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link fw-500" routerLink="/reports" routerLinkActive="active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-1" viewBox="0 0 16 16" style="display: inline;">
+              <path d="M0 3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3zm2-1a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H2z"/>
+            </svg>
+            Reports
+          </a>
+        </li>
+      </ul>
+      <div class="d-flex align-items-center ms-3">
+        <!-- If not logged in show auth buttons -->
+        <div *ngIf="!loggedIn" class="d-flex gap-2">
+          <button class="btn btn-outline-light btn-sm" routerLink="/login" (click)="toggleAuth()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-1" viewBox="0 0 16 16" style="display: inline;">
+              <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2z"/>
+            </svg>
+            Login
+          </button>
+          <button class="btn btn-light btn-sm" routerLink="/signup">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-1" viewBox="0 0 16 16" style="display: inline;">
+              <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 5-4 5 3 5 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c.876 0 2.358.235 3.112 1.022.458.479.666 1.159.666 1.974v.04Z"/>
+            </svg>
+            Sign Up
+          </button>
+        </div>
+
+        <!-- If logged in show user menu -->
+        <div *ngIf="loggedIn" class="dropdown">
+          <button 
+            class="btn btn-light btn-sm dropdown-toggle" 
+            type="button" 
+            id="userMenu" 
+            data-bs-toggle="dropdown" 
+            aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-1" viewBox="0 0 16 16" style="display: inline;">
+              <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 5-4 5 3 5 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c.876 0 2.358.235 3.112 1.022.458.479.666 1.159.666 1.974v.04Z"/>
+            </svg>
+            {{ userName }}
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+            <li><a class="dropdown-item" routerLink="/profile">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="me-2" viewBox="0 0 16 16" style="display: inline;">
+                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 5-4 5 3 5 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c.876 0 2.358.235 3.112 1.022.458.479.666 1.159.666 1.974v.04Z"/>
+              </svg>
+              Profile
+            </a></li>
+            <li><a class="dropdown-item" routerLink="/settings">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="me-2" viewBox="0 0 16 16" style="display: inline;">
+                <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.264-2.17 1.654l.13.325a1.464 1.464 0 0 1-1.07 1.971l-.335.074c-1.393.152-1.9 1.788-.72 2.65l.23.184a1.464 1.464 0 0 1 0 2.336l-.23.184c-1.18.862-.673 2.498.72 2.65l.335.074a1.464 1.464 0 0 1 1.07 1.971l-.13.325c-.516 1.39 1.165 2.684 2.17 1.654l.31-.17a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.264 2.17-1.654l-.13-.325a1.464 1.464 0 0 1 1.07-1.971l.335-.074c1.393-.152 1.9-1.788.72-2.65l-.23-.184a1.464 1.464 0 0 1 0-2.336l.23-.184c1.18-.862.673-2.498-.72-2.65l-.335-.074a1.464 1.464 0 0 1-1.07-1.971l.13-.325c.516-1.39-1.165-2.684-2.17-1.654l-.31.17a1.464 1.464 0 0 1-2.105-.872l-.1-.34zm2.5.5a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0z"/>
+              </svg>
+              Settings
+            </a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" (click)="logout()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="me-2" viewBox="0 0 16 16" style="display: inline;">
+                <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
+              </svg>
+              Logout
+            </a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
