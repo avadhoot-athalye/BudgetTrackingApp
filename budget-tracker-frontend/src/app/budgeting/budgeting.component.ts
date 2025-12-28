@@ -12,6 +12,7 @@ import { BudgetService, ExpenseHeadDto, BudgetCreateRequest } from '../services/
 })
 export class BudgetingComponent implements OnInit {
   expenseHeads: ExpenseHeadDto[] = [];
+  budgetAmountAllocated: number = 0;
   // Hard-coded budget rows for display purposes (will be fetched from DB later)
   budgets: { expenseHead: string; allocatedAmount: number }[] = [];
   model: { expenseHeadId: number | null; allocatedAmount: number | null } = {
@@ -68,6 +69,7 @@ export class BudgetingComponent implements OnInit {
           expenseHead: budget.expenseHead.name,
           allocatedAmount: budget.allocatedAmount
         }));
+        this.budgetAmountAllocated = this.budgets.reduce((sum, b) => sum + b.allocatedAmount, 0);
       },
       error: (err) => (this.errorMessage = 'Failed to load budget details')
     });
