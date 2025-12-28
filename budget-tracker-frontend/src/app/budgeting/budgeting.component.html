@@ -1,92 +1,218 @@
-<main class="bg-light container">
-  <div class="row g-5">
-    <div class="p-5 col-md-6">
-      <div class="rounded">
-        <h1>Budget Management</h1>
-        <p class="fs-5">Create and manage your budget allocations</p>
-        <hr class="col-3 col-md-2 mb-5">
-      </div>
-      <div>
-        <form (ngSubmit)="onSubmit()" class="needs-validation" novalidate>
-
-          <!-- Validation Message -->
-          <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ successMessage }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-          <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ errorMessage }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-
-          <div class="form-group row">
-            <label for="expenseHead" class="col-sm-2 col-form-label">Expense Head</label>
-            <div class="col-sm-10">
-              <select id="expenseHead" class="form-select form-select-custom" [(ngModel)]="model.expenseHeadId"
-                name="expenseHeadId" required>
-                <option [ngValue]="null" disabled>Select an expense head</option>
-                <option *ngFor="let h of expenseHeads" [ngValue]="h.id">{{ h.name }}</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group row">
-            <label for="allocatedAmount" class="col-sm-2 col-form-label">Allocated Amount</label>
-            <div class="col-sm-10">
-              <input id="allocatedAmount" type="number" class="form-control form-control-custom"
-                [(ngModel)]="model.allocatedAmount" name="allocatedAmount" min="0" placeholder="0.00" required />
-            </div>
-          </div>
-
-          <div class="d-grid gap-2 mt-4">
-            <button type="submit" class="btn btn-primary btn-lg btn-custom">
-              Save Budget
-            </button>
-          </div>
-
-        </form>
-      </div>
+<main>
+  <div class="container">
+    <!-- Page Header -->
+    <div class="mb-5">
+      <h1 class="mb-2">Budget Management</h1>
+      <p class="text-muted">Create and manage your budget allocations</p>
     </div>
 
-    <div class="col-md-6">
-      <h4 class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          Budget Amount Allocated:
+    <!-- Main Content Row -->
+    <div class="row g-4">
+      <!-- Left Column: Budget Allocation Form -->
+      <div class="col-lg-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body p-4">
+            <h5 class="card-title mb-4 fw-semibold">Add New Budget</h5>
+
+            <form (ngSubmit)="onSubmit()" class="needs-validation" novalidate>
+
+              <!-- Success Message -->
+              <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Success!</strong> {{ successMessage }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+
+              <!-- Error Message -->
+              <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error!</strong> {{ errorMessage }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+
+              <!-- Expense Head Field -->
+              <div class="mb-3">
+                <label for="expenseHead" class="form-label">
+                  <small class="text-muted">Expense Head</small>
+                </label>
+                <select 
+                  id="expenseHead" 
+                  class="form-select" 
+                  [(ngModel)]="model.expenseHeadId"
+                  (change)="onExpenseHeadChange()"
+                  name="expenseHeadId" 
+                  required>
+                  <option [ngValue]="null" disabled selected>Select an expense head</option>
+                  <option *ngFor="let h of expenseHeads" [ngValue]="h.id">{{ h.name }}</option>
+                  <!-- Special option to add new expense head -->
+                  <option [ngValue]="-1" class="add-new-option">
+                    + Add new expense head
+                  </option>
+                </select>
+              </div>
+
+              <!-- Allocated Amount Field -->
+              <div class="mb-4">
+                <label for="allocatedAmount" class="form-label">
+                  <small class="text-muted">Allocated Amount</small>
+                </label>
+                <input 
+                  id="allocatedAmount" 
+                  type="number" 
+                  class="form-control"
+                  [(ngModel)]="model.allocatedAmount" 
+                  name="allocatedAmount" 
+                  min="0" 
+                  placeholder="0.00" 
+                  required />
+              </div>
+
+              <!-- Submit Button -->
+              <button 
+                type="submit" 
+                class="btn btn-primary w-100 py-2"
+                [disabled]="isLoading">
+                <span *ngIf="!isLoading">Save Budget</span>
+                <span *ngIf="isLoading">
+                  <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Saving...
+                </span>
+              </button>
+
+            </form>
+          </div>
         </div>
-        <div>
-          {{ budgetAmountAllocated | currency: 'INR'}}
+      </div>
+
+      <!-- Right Column: Budget Summary & Table -->
+      <div class="col-lg-8">
+        <!-- Budget Summary Card -->
+        <div class="card shadow-sm mb-4">
+          <div class="card-body p-4">
+            <p class="text-muted small text-uppercase mb-2">Total Budget Allocated</p>
+            <div class="d-flex justify-content-between align-items-baseline">
+              <h3 class="fs-3 fw-bold mb-0">
+                {{ budgetAmountAllocated | currency: 'INR' }}
+              </h3>
+            </div>
+          </div>
         </div>
-      </h4>
-      <div>
-        <div class="table-responsive">
-          <table class="bg-light table table-hover">
-            <thead>
-              <tr>
-                <th>
-                  Expense Head
-                </th>
-                <th class="text-end">
-                  Allocation Amount
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let b of budgets; let i = index" class="table-row-hover">
-                <td class="fw-500">{{ b.expenseHead }}</td>
-                <td class="text-end fw-600">{{ b.allocatedAmount | currency: 'INR' }}</td>
-              </tr>
-            </tbody>
-          </table>
-          <div *ngIf="budgets.length === 0" class="text-center py-4 text-muted">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="mb-2 opacity-50"
-              viewBox="0 0 16 16" style="display: block;">
-              <path
-                d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2z" />
-            </svg>
-            <p>No budgets created yet. Add one to get started!</p>
+
+        <!-- Budget Allocations Table Card -->
+        <div class="card shadow-sm">
+          <div class="card-body p-4">
+            <h5 class="card-title mb-4 fw-semibold">Budget Allocations</h5>
+
+            <div class="table-responsive">
+              <table class="table table-hover table-striped mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th scope="col" class="text-uppercase small text-muted fw-semibold">Expense Head</th>
+                    <th scope="col" class="text-end text-uppercase small text-muted fw-semibold">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let b of budgets; let i = index">
+                    <td class="fw-medium">{{ b.expenseHead }}</td>
+                    <td class="text-end fw-medium">{{ b.allocatedAmount | currency: 'INR' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <!-- Empty State -->
+              <div *ngIf="budgets.length === 0" class="text-center py-5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" 
+                  class="mb-3 text-muted opacity-50" viewBox="0 0 16 16">
+                  <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2z" />
+                </svg>
+                <p class="text-muted mb-0">No budgets created yet. Add one to get started!</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </main>
+
+<!-- Add Expense Head Modal -->
+<div 
+  #addExpenseHeadModal
+  class="modal fade" 
+  id="addExpenseHeadModal" 
+  tabindex="-1" 
+  aria-labelledby="addExpenseHeadModalLabel" 
+  aria-hidden="true"
+  (hidden.bs.modal)="onModalHide()">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      
+      <!-- Modal Header -->
+      <div class="modal-header border-bottom">
+        <h5 class="modal-title fw-semibold" id="addExpenseHeadModalLabel">
+          Add Expense Head
+        </h5>
+        <button 
+          type="button" 
+          class="btn-close" 
+          data-bs-dismiss="modal" 
+          aria-label="Close"
+          [disabled]="isModalLoading">
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body p-4">
+        
+        <!-- Error Message -->
+        <div *ngIf="modalErrorMessage" class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+          <strong>Error!</strong> {{ modalErrorMessage }}
+          <button 
+            type="button" 
+            class="btn-close" 
+            (click)="modalErrorMessage = ''" 
+            aria-label="Close">
+          </button>
+        </div>
+
+        <!-- Expense Head Name Field -->
+        <div class="mb-3">
+          <label for="modalExpenseHeadName" class="form-label">
+            <small class="text-muted">Expense Head Name</small>
+          </label>
+          <input 
+            id="modalExpenseHeadName" 
+            type="text" 
+            class="form-control"
+            [(ngModel)]="expenseHeadForm.name"
+            placeholder="e.g., Groceries, Utilities, Transportation"
+            [disabled]="isModalLoading"
+            required />
+          <small class="form-text text-muted">Required. Must be unique.</small>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer border-top">
+        <button 
+          type="button" 
+          class="btn btn-secondary" 
+          data-bs-dismiss="modal"
+          [disabled]="isModalLoading">
+          Cancel
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-primary"
+          (click)="submitExpenseHead()"
+          [disabled]="isModalLoading || !expenseHeadForm.name.trim()">
+          <span *ngIf="!isModalLoading">Save</span>
+          <span *ngIf="isModalLoading">
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Saving...
+          </span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -7,6 +7,10 @@ export interface ExpenseHeadDto {
   name: string;
 }
 
+export interface ExpenseHeadCreateRequest {
+  name: string;
+}
+
 export interface BudgetCreateRequest {
   expenseHeadId: number;
   allocatedAmount: number;
@@ -33,6 +37,10 @@ export class BudgetService {
 
   getExpenseHeads(): Observable<ExpenseHeadDto[]> {
     return this.http.get<ExpenseHeadDto[]>(`${this.base}/expense-heads`);
+  }
+
+  createExpenseHead(req: ExpenseHeadCreateRequest): Observable<ExpenseHeadDto> {
+    return this.http.post<ExpenseHeadDto>(`${this.base}/expense-heads`, req);
   }
 
   getBudgetDetails(userId: number): Observable<BudgetResponseDto[]> {

@@ -1,0 +1,130 @@
+/* Card Styling */
+.card {
+  border: none;
+  transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Form Controls */
+.form-control:focus,
+.form-select:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.form-control,
+.form-select {
+  border-color: #dee2e6;
+}
+
+/* Dropdown "Add New" Option Styling */
+.add-new-option {
+  font-weight: 600;
+  color: #0d6efd;
+  background-color: #f0f6ff;
+}
+
+/* Table Styling */
+.table-hover tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.table thead th {
+  border-bottom: 2px solid #dee2e6;
+  padding: 1rem 0.75rem;
+}
+
+/* Button Styling */
+.btn-primary {
+  transition: all 0.2s ease;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 0.25rem 0.75rem rgba(13, 110, 253, 0.3);
+}
+
+.btn-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Spinner animation */
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 0.2em;
+}
+
+/* Typography */
+.fs-3 {
+  line-height: 1.2;
+}
+
+/* Empty State */
+.text-muted.opacity-50 {
+  opacity: 0.5;
+}
+
+/* Modal Styling */
+.modal-content {
+  border: none;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+  background-color: #f8f9fa;
+  border-color: #dee2e6;
+}
+
+.modal-footer {
+  background-color: #f8f9fa;
+  border-color: #dee2e6;
+}
+
+.modal-body {
+  background-color: #fff;
+}
+
+/* Textarea styling */
+textarea.form-control {
+  resize: vertical;
+  min-height: 80px;
+}
+
+textarea.form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Help text styling */
+.form-text {
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+  .card {
+    margin-bottom: 1rem;
+  }
+}
+
+/* Focus visible for better accessibility */
+.btn-close:focus {
+  outline: 2px solid #0d6efd;
+  outline-offset: 2px;
+}
+
