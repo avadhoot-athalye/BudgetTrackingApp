@@ -16,6 +16,10 @@ export interface BudgetCreateRequest {
   allocatedAmount: number;
 }
 
+export interface BudgetUpdateRequest {
+  allocatedAmount: number;
+}
+
 export interface BudgetDto {
   id: { expenseHeadId: number };
   allocatedAmount: number;
@@ -49,5 +53,9 @@ export class BudgetService {
 
   createBudget(req: BudgetCreateRequest): Observable<BudgetDto> {
     return this.http.post<BudgetDto>(`${this.base}/budgets`, req);
+  }
+
+  updateBudget(budgetId: number, req: BudgetUpdateRequest): Observable<BudgetResponseDto> {
+    return this.http.put<BudgetResponseDto>(`${this.base}/budgets/${budgetId}`, req);
   }
 }

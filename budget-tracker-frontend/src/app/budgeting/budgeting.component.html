@@ -92,6 +92,11 @@
               <h3 class="fs-3 fw-bold mb-0">
                 {{ budgetAmountAllocated | currency: 'INR' }}
               </h3>
+              <p class="text-muted small text-uppercase mb-2">/ {{ familyMonthlyIncome | currency: 'INR' }}</p>
+            </div>
+        
+            <div class="progress mt-1">
+              <div class="progress-bar" role="progressbar" [style.width]="calculateBudgetUtilization() + '%'" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
           </div>
         </div>
@@ -107,12 +112,24 @@
                   <tr>
                     <th scope="col" class="text-uppercase small text-muted fw-semibold">Expense Head</th>
                     <th scope="col" class="text-end text-uppercase small text-muted fw-semibold">Amount</th>
+                    <th scope="col" class="text-center text-uppercase small text-muted fw-semibold">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let b of budgets; let i = index">
-                    <td class="fw-medium">{{ b.expenseHead }}</td>
+                    <td class="fw-medium">{{ b.expenseHead.name }}</td>
                     <td class="text-end fw-medium">{{ b.allocatedAmount | currency: 'INR' }}</td>
+                    <td class="text-center">
+                      <button 
+                        type="button"
+                        class="btn btn-sm btn-outline-primary edit-btn" 
+                        (click)="openEditBudgetModal(b)"
+                        title="Edit allocation">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" class="edit-icon">
+                          <path d="M15.898 2.045c-.604-.604-1.582-.604-2.186 0l-10.588 10.588a.5.5 0 0 0-.099.186l-2.039 6.066a.5.5 0 0 0 .63.63l6.066-2.039a.5.5 0 0 0 .186-.099L16 4.232c.604-.604.604-1.582 0-2.187zM2.771 12.358l6.088-6.088 1.414 1.414-6.088 6.088-1.414-1.414zm10.726-10.726l1.414 1.414-.707.707-1.414-1.414.707-.707z"/>
+                        </svg>
+                      </button>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -141,7 +158,7 @@
   tabindex="-1" 
   aria-labelledby="addExpenseHeadModalLabel" 
   aria-hidden="true"
-  (hidden.bs.modal)="onModalHide()">
+  (hidden.bs.modal)="onAddExpenseHeadModalHide()">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       
@@ -155,7 +172,7 @@
           class="btn-close" 
           data-bs-dismiss="modal" 
           aria-label="Close"
-          [disabled]="isModalLoading">
+          [disabled]="addExpenseHeadLoading">
         </button>
       </div>
 
@@ -163,12 +180,12 @@
       <div class="modal-body p-4">
         
         <!-- Error Message -->
-        <div *ngIf="modalErrorMessage" class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
-          <strong>Error!</strong> {{ modalErrorMessage }}
+        <div *ngIf="addExpenseHeadErrorMessage" class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+          <strong>Error!</strong> {{ addExpenseHeadErrorMessage }}
           <button 
             type="button" 
             class="btn-close" 
-            (click)="modalErrorMessage = ''" 
+            (click)="addExpenseHeadErrorMessage = ''" 
             aria-label="Close">
           </button>
         </div>
@@ -184,7 +201,7 @@
             class="form-control"
             [(ngModel)]="expenseHeadForm.name"
             placeholder="e.g., Groceries, Utilities, Transportation"
-            [disabled]="isModalLoading"
+            [disabled]="addExpenseHeadLoading"
             required />
           <small class="form-text text-muted">Required. Must be unique.</small>
         </div>
@@ -197,16 +214,115 @@
           type="button" 
           class="btn btn-secondary" 
           data-bs-dismiss="modal"
-          [disabled]="isModalLoading">
+          [disabled]="addExpenseHeadLoading">
           Cancel
         </button>
         <button 
           type="button" 
           class="btn btn-primary"
           (click)="submitExpenseHead()"
-          [disabled]="isModalLoading || !expenseHeadForm.name.trim()">
-          <span *ngIf="!isModalLoading">Save</span>
-          <span *ngIf="isModalLoading">
+          [disabled]="addExpenseHeadLoading || !expenseHeadForm.name.trim()">
+          <span *ngIf="!addExpenseHeadLoading">Save</span>
+          <span *ngIf="addExpenseHeadLoading">
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Saving...
+          </span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Edit Budget Allocation Modal -->
+<div 
+  #editBudgetModal
+  class="modal fade" 
+  id="editBudgetModal" 
+  tabindex="-1" 
+  aria-labelledby="editBudgetModalLabel" 
+  aria-hidden="true"
+  (hidden.bs.modal)="onEditBudgetModalHide()">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      
+      <!-- Modal Header -->
+      <div class="modal-header border-bottom">
+        <h5 class="modal-title fw-semibold" id="editBudgetModalLabel">
+          Edit Budget Allocation
+        </h5>
+        <button 
+          type="button" 
+          class="btn-close" 
+          data-bs-dismiss="modal" 
+          aria-label="Close"
+          [disabled]="editBudgetLoading">
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body p-4">
+        
+        <!-- Error Message -->
+        <div *ngIf="editBudgetErrorMessage" class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+          <strong>Error!</strong> {{ editBudgetErrorMessage }}
+          <button 
+            type="button" 
+            class="btn-close" 
+            (click)="editBudgetErrorMessage = ''" 
+            aria-label="Close">
+          </button>
+        </div>
+
+        <!-- Expense Head Field (Read-Only) -->
+        <div class="mb-3">
+          <label for="editExpenseHeadName" class="form-label">
+            <small class="text-muted">Expense Head</small>
+          </label>
+          <input 
+            id="editExpenseHeadName" 
+            type="text" 
+            class="form-control"
+            [value]="editBudgetForm.expenseHeadName"
+            disabled />
+          <small class="form-text text-muted">Read-only</small>
+        </div>
+
+        <!-- Allocation Amount Field -->
+        <div class="mb-3">
+          <label for="editAllocatedAmount" class="form-label">
+            <small class="text-muted">Allocated Amount</small>
+          </label>
+          <input 
+            id="editAllocatedAmount" 
+            type="number" 
+            class="form-control"
+            [(ngModel)]="editBudgetForm.allocatedAmount"
+            [disabled]="editBudgetLoading"
+            min="0"
+            placeholder="0.00"
+            required />
+          <small class="form-text text-muted">Original: {{ editBudgetForm.originalAmount | currency: 'INR' }}</small>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer border-top">
+        <button 
+          type="button" 
+          class="btn btn-secondary" 
+          data-bs-dismiss="modal"
+          [disabled]="editBudgetLoading">
+          Cancel
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-primary"
+          (click)="submitEditBudget()"
+          [disabled]="editBudgetLoading || editBudgetForm.allocatedAmount === editBudgetForm.originalAmount || !editBudgetForm.allocatedAmount">
+          <span *ngIf="!editBudgetLoading">Save Changes</span>
+          <span *ngIf="editBudgetLoading">
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             Saving...
           </span>

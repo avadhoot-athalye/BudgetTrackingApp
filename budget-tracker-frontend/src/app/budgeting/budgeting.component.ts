@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BudgetService, ExpenseHeadDto, BudgetCreateRequest, ExpenseHeadCreateRequest } from '../services/budget.service';
+import { BudgetService, ExpenseHeadDto, BudgetCreateRequest, ExpenseHeadCreateRequest, BudgetUpdateRequest, BudgetResponseDto } from '../services/budget.service';
 
 @Component({
   selector: 'app-budgeting',
@@ -14,7 +14,7 @@ export class BudgetingComponent implements OnInit, AfterViewInit {
   // Budget Allocation Form
   expenseHeads: ExpenseHeadDto[] = [];
   budgetAmountAllocated: number = 0;
-  budgets: { expenseHead: string; allocatedAmount: number }[] = [];
+  budgets: BudgetResponseDto[] = [];
   model: { expenseHeadId: number | null; allocatedAmount: number | null } = {
     expenseHeadId: null,
     allocatedAmount: null
@@ -24,41 +24,59 @@ export class BudgetingComponent implements OnInit, AfterViewInit {
   successMessage = '';
   errorMessage = '';
   isLoading = false;
+  familyMonthlyIncome = 0;
 
   // Expense Head Modal
-  @ViewChild('addExpenseHeadModal') modalElement!: ElementRef;
-  modal: any;
+  @ViewChild('addExpenseHeadModal') addExpenseHeadModalElement!: ElementRef;
+  addExpenseHeadModal: any;
   
-  // Modal Form Data
+  // Modal Form Data for Add Expense Head
   expenseHeadForm = {
     name: '',
     description: ''
   };
-  modalErrorMessage = '';
-  isModalLoading = false;
+  addExpenseHeadErrorMessage = '';
+  addExpenseHeadLoading = false;
+
+  // Edit Budget Modal
+  @ViewChild('editBudgetModal') editBudgetModalElement!: ElementRef;
+  editBudgetModal: any;
+  
+  // Edit Budget Form Data
+  editBudgetForm = {
+    budgetId: 0,
+    expenseHeadName: '',
+    allocatedAmount: 0,
+    originalAmount: 0
+  };
+  editBudgetErrorMessage = '';
+  editBudgetLoading = false;
 
   constructor(private budgetService: BudgetService) {}
 
   ngOnInit(): void {
     this.loadExpenseHeads();
     this.fetchBudgetDetails();
+    this.familyMonthlyIncome = 200000; // Example static value; replace with actual user data as needed
   }
 
   ngAfterViewInit(): void {
-    // Initialize Bootstrap modal after view is rendered
-    if (this.modalElement && this.modalElement.nativeElement) {
-      const bootstrapModal = (window as any).bootstrap;
-      if (bootstrapModal) {
-        this.modal = new bootstrapModal.Modal(this.modalElement.nativeElement);
-      }
+    // Initialize Bootstrap modals after view is rendered
+    const bootstrapModal = (window as any).bootstrap;
+    
+    // Add Expense Head Modal
+    if (this.addExpenseHeadModalElement && this.addExpenseHeadModalElement.nativeElement && bootstrapModal) {
+      this.addExpenseHeadModal = new bootstrapModal.Modal(this.addExpenseHeadModalElement.nativeElement);
+    }
+    
+    // Edit Budget Modal
+    if (this.editBudgetModalElement && this.editBudgetModalElement.nativeElement && bootstrapModal) {
+      this.editBudgetModal = new bootstrapModal.Modal(this.editBudgetModalElement.nativeElement);
     }
   }
 
   // ===== EXPENSE HEAD MODAL METHODS =====
 
-  /**
-   * Load expense heads from backend
-   */
   loadExpenseHeads(): void {
     this.budgetService.getExpenseHeads().subscribe({
       next: (list) => (this.expenseHeads = list),
@@ -66,55 +84,42 @@ export class BudgetingComponent implements OnInit, AfterViewInit {
     });
   }
 
-  /**
-   * Handle dropdown change - check if "add new" option was selected
-   */
   onExpenseHeadChange(): void {
-    // Check if the special "add-new" value was selected
     if (this.model.expenseHeadId === -1) {
-      // Reset the dropdown value
       this.model.expenseHeadId = null;
-      // Open the modal
       this.openAddExpenseHeadModal();
     }
   }
 
-  /**
-   * Open Add Expense Head modal
-   */
+  calculateBudgetUtilization(): number {
+    const totalBudgeted = this.budgets.reduce((sum, b) => sum + b.allocatedAmount, 0);
+    return this.familyMonthlyIncome ? (totalBudgeted / this.familyMonthlyIncome) * 100 : 0;
+  }
+
   openAddExpenseHeadModal(): void {
-    // Reset form
     this.expenseHeadForm = { name: '', description: '' };
-    this.modalErrorMessage = '';
+    this.addExpenseHeadErrorMessage = '';
     
-    if (this.modal) {
-      this.modal.show();
+    if (this.addExpenseHeadModal) {
+      this.addExpenseHeadModal.show();
     } else {
-      console.error('Modal not initialized. Make sure Bootstrap JS is loaded.');
+      console.error('Add Expense Head modal not initialized.');
     }
   }
 
-  /**
-   * Close the modal
-   */
   closeAddExpenseHeadModal(): void {
-    if (this.modal) {
-      this.modal.hide();
+    if (this.addExpenseHeadModal) {
+      this.addExpenseHeadModal.hide();
     }
   }
 
-  /**
-   * Validate expense head form input
-   */
   validateExpenseHeadForm(): { valid: boolean; error?: string } {
     const trimmedName = this.expenseHeadForm.name.trim();
 
-    // Check if name is empty
     if (!trimmedName) {
       return { valid: false, error: 'Expense head name is required.' };
     }
 
-    // Check for duplicate (case-insensitive)
     const isDuplicate = this.expenseHeads.some(
       (head) => head.name.toLowerCase() === trimmedName.toLowerCase()
     );
@@ -125,65 +130,134 @@ export class BudgetingComponent implements OnInit, AfterViewInit {
     return { valid: true };
   }
 
-  /**
-   * Submit new expense head
-   */
   submitExpenseHead(): void {
-    this.modalErrorMessage = '';
+    this.addExpenseHeadErrorMessage = '';
 
-    // Validate
     const validation = this.validateExpenseHeadForm();
     if (!validation.valid) {
-      this.modalErrorMessage = validation.error || 'Validation failed.';
+      this.addExpenseHeadErrorMessage = validation.error || 'Validation failed.';
       return;
     }
 
-    // Prepare payload
     const payload: ExpenseHeadCreateRequest = {
       name: this.expenseHeadForm.name.trim()
     };
 
-    this.isModalLoading = true;
+    this.addExpenseHeadLoading = true;
 
-    // Call API
     this.budgetService.createExpenseHead(payload).subscribe({
       next: (newHead) => {
-        this.isModalLoading = false;
-        
-        // Add to list
+        this.addExpenseHeadLoading = false;
         this.expenseHeads.push(newHead);
-        
-        // Auto-select the newly created head
         this.model.expenseHeadId = newHead.id;
-        
-        // Close modal
         this.closeAddExpenseHeadModal();
-        
-        // Show success message
         this.successMessage = `Expense head "${newHead.name}" created successfully!`;
-        
-        // Clear form
         this.expenseHeadForm = { name: '', description: '' };
       },
       error: (err) => {
-        this.isModalLoading = false;
-        this.modalErrorMessage = 'Failed to create expense head. Please try again.';
+        this.addExpenseHeadLoading = false;
+        this.addExpenseHeadErrorMessage = 'Failed to create expense head. Please try again.';
         console.error('Error creating expense head:', err);
       }
     });
   }
 
-  /**
-   * Handle modal close button - reset form
-   */
-  onModalHide(): void {
+  onAddExpenseHeadModalHide(): void {
     this.expenseHeadForm = { name: '', description: '' };
-    this.modalErrorMessage = '';
+    this.addExpenseHeadErrorMessage = '';
+  }
+
+  // ===== EDIT BUDGET MODAL METHODS =====
+
+  openEditBudgetModal(budget: any): void {
+    this.editBudgetForm = {
+      budgetId: budget.id,
+      expenseHeadName: budget.expenseHead.name,
+      allocatedAmount: budget.allocatedAmount,
+      originalAmount: budget.allocatedAmount
+    };
+    this.editBudgetErrorMessage = '';
+    
+    if (this.editBudgetModal) {
+      this.editBudgetModal.show();
+    } else {
+      console.error('Edit Budget modal not initialized.');
+    }
+  }
+
+  closeEditBudgetModal(): void {
+    if (this.editBudgetModal) {
+      this.editBudgetModal.hide();
+    }
+  }
+
+  validateEditBudgetForm(): { valid: boolean; error?: string } {
+    const amount = this.editBudgetForm.allocatedAmount;
+
+    if (amount == null || amount === 0) {
+      return { valid: false, error: 'Allocation amount is required and must be greater than 0.' };
+    }
+
+    if (amount < 0) {
+      return { valid: false, error: 'Allocation amount must be a positive number.' };
+    }
+
+    if (amount === this.editBudgetForm.originalAmount) {
+      return { valid: false, error: 'No changes were made to the allocation amount.' };
+    }
+
+    return { valid: true };
+  }
+
+  submitEditBudget(): void {
+    this.editBudgetErrorMessage = '';
+
+    const validation = this.validateEditBudgetForm();
+    if (!validation.valid) {
+      this.editBudgetErrorMessage = validation.error || 'Validation failed.';
+      return;
+    }
+
+    const payload: BudgetUpdateRequest = {
+      allocatedAmount: this.editBudgetForm.allocatedAmount
+    };
+
+    this.editBudgetLoading = true;
+
+    this.budgetService.updateBudget(this.editBudgetForm.budgetId, payload).subscribe({
+      next: (updatedBudget) => {
+        this.editBudgetLoading = false;
+        
+        const index = this.budgets.findIndex(b => b.id === this.editBudgetForm.budgetId);
+        if (index !== -1) {
+          this.budgets[index].allocatedAmount = updatedBudget.allocatedAmount;
+        }
+        
+        this.budgetAmountAllocated = this.budgets.reduce((sum, b) => sum + b.allocatedAmount, 0);
+        this.closeEditBudgetModal();
+        this.successMessage = `Budget allocation updated successfully!`;
+      },
+      error: (err) => {
+        this.editBudgetLoading = false;
+        this.editBudgetErrorMessage = 'Failed to update budget allocation. Please try again.';
+        console.error('Error updating budget:', err);
+      }
+    });
+  }
+
+  onEditBudgetModalHide(): void {
+    this.editBudgetForm = {
+      budgetId: 0,
+      expenseHeadName: '',
+      allocatedAmount: 0,
+      originalAmount: 0
+    };
+    this.editBudgetErrorMessage = '';
   }
 
   // ===== BUDGET ALLOCATION METHODS =====
 
-  onSubmit() {
+  onSubmit(): void {
     this.successMessage = '';
     this.errorMessage = '';
 
@@ -203,7 +277,6 @@ export class BudgetingComponent implements OnInit, AfterViewInit {
       next: (res) => {
         this.isLoading = false;
         this.successMessage = 'Budget saved successfully.';
-        // Reset form partially
         this.model.allocatedAmount = null;
         this.fetchBudgetDetails();
       },
@@ -213,14 +286,14 @@ export class BudgetingComponent implements OnInit, AfterViewInit {
         console.error(err);
       }
     });
-
   }
 
-  fetchBudgetDetails() {
+  fetchBudgetDetails(): void {
     this.budgetService.getBudgetDetails(100).subscribe({
       next: (list) => {
         this.budgets = list.map(budget => ({
-          expenseHead: budget.expenseHead.name,
+          id: budget.id,
+          expenseHead: budget.expenseHead,
           allocatedAmount: budget.allocatedAmount
         }));
         this.budgetAmountAllocated = this.budgets.reduce((sum, b) => sum + b.allocatedAmount, 0);
@@ -228,5 +301,4 @@ export class BudgetingComponent implements OnInit, AfterViewInit {
       error: (err) => (this.errorMessage = 'Failed to load budget details')
     });
   }
-
 }

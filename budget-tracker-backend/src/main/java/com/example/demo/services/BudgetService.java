@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dto.BudgetDto;
 import com.example.demo.repository.BudgetRepository;
 import com.example.demo.repository.ExpenseHeadRepository;
+
+import jakarta.validation.Valid;
+
 import com.example.demo.dto.BudgetCreateRequest;
 import com.example.demo.dto.BudgetId;
 import com.example.demo.dto.ExpenseHeadDto;
@@ -23,7 +26,7 @@ public class BudgetService {
 	}
 
 	public List<BudgetDto> getBudgetsByUserId(Long userId) {
-		return budgetRepository.findByIdUserId(userId);
+		return budgetRepository.findAllByIdUserIdOrderByAllocatedAmountDesc(userId);
 	}
 
 	public BudgetDto addBudget(BudgetCreateRequest req) {
@@ -41,6 +44,17 @@ public class BudgetService {
 		budget.setAllocatedAmount(req.getAllocatedAmount());
 
 		return budgetRepository.save(budget);
+	}
+
+	public BudgetDto updateBudget(Long expenseHeadId, BudgetDto req) {
+		BudgetDto existingbudget = budgetRepository.findByIdUserIdAndIdExpenseHeadId(req.getUserId(), expenseHeadId)
+				.orElseThrow(() -> new IllegalArgumentException("ExpenseHead not found: " + expenseHeadId));
+		
+		if(req.getAllocatedAmount() != null) {
+			existingbudget.setAllocatedAmount(req.getAllocatedAmount());
+		}
+				
+		return budgetRepository.save(existingbudget);
 	}
 
 }
