@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BudgetService, ExpenseHeadDto, BudgetCreateRequest, ExpenseHeadCreateRequest, BudgetUpdateRequest, BudgetResponseDto } from '../services/budget.service';
+import { BudgetService, ExpenseHeadDto, BudgetCreateRequest, ExpenseHeadCreateRequest, BudgetResponseDto, BudgetRequestDto } from '../services/budget.service';
 
 @Component({
   selector: 'app-budgeting',
@@ -44,7 +44,7 @@ export class BudgetingComponent implements OnInit, AfterViewInit {
   
   // Edit Budget Form Data
   editBudgetForm = {
-    budgetId: 0,
+    budgetId: {userId: 0, expenseHeadId: 0},
     expenseHeadName: '',
     allocatedAmount: 0,
     originalAmount: 0
@@ -57,7 +57,7 @@ export class BudgetingComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.loadExpenseHeads();
     this.fetchBudgetDetails();
-    this.familyMonthlyIncome = 200000; // Example static value; replace with actual user data as needed
+    this.familyMonthlyIncome = 208000; // Example static value; replace with actual user data as needed
   }
 
   ngAfterViewInit(): void {
@@ -194,8 +194,8 @@ export class BudgetingComponent implements OnInit, AfterViewInit {
   validateEditBudgetForm(): { valid: boolean; error?: string } {
     const amount = this.editBudgetForm.allocatedAmount;
 
-    if (amount == null || amount === 0) {
-      return { valid: false, error: 'Allocation amount is required and must be greater than 0.' };
+    if (amount == null) {
+      this.editBudgetForm.allocatedAmount = 0;
     }
 
     if (amount < 0) {
@@ -218,17 +218,25 @@ export class BudgetingComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    const payload: BudgetUpdateRequest = {
+    const payload: BudgetRequestDto = {
+      id: {
+        userId: this.editBudgetForm.budgetId.userId,
+        expenseHeadId: this.editBudgetForm.budgetId.expenseHeadId
+      },
+      expenseHead: { 
+        id: this.editBudgetForm.budgetId.expenseHeadId, 
+        name: this.editBudgetForm.expenseHeadName 
+      },
       allocatedAmount: this.editBudgetForm.allocatedAmount
     };
 
     this.editBudgetLoading = true;
 
-    this.budgetService.updateBudget(this.editBudgetForm.budgetId, payload).subscribe({
+    this.budgetService.updateBudget(this.editBudgetForm.budgetId.expenseHeadId, payload).subscribe({
       next: (updatedBudget) => {
         this.editBudgetLoading = false;
         
-        const index = this.budgets.findIndex(b => b.id === this.editBudgetForm.budgetId);
+        const index = this.budgets.findIndex(b => b.id === this.editBudgetForm.budgetId.expenseHeadId);
         if (index !== -1) {
           this.budgets[index].allocatedAmount = updatedBudget.allocatedAmount;
         }
@@ -236,6 +244,7 @@ export class BudgetingComponent implements OnInit, AfterViewInit {
         this.budgetAmountAllocated = this.budgets.reduce((sum, b) => sum + b.allocatedAmount, 0);
         this.closeEditBudgetModal();
         this.successMessage = `Budget allocation updated successfully!`;
+        this.fetchBudgetDetails();
       },
       error: (err) => {
         this.editBudgetLoading = false;
@@ -247,7 +256,7 @@ export class BudgetingComponent implements OnInit, AfterViewInit {
 
   onEditBudgetModalHide(): void {
     this.editBudgetForm = {
-      budgetId: 0,
+      budgetId: { userId: 0, expenseHeadId: 0 },
       expenseHeadName: '',
       allocatedAmount: 0,
       originalAmount: 0

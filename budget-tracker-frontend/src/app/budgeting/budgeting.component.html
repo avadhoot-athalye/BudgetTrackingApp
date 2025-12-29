@@ -320,7 +320,7 @@
           type="button" 
           class="btn btn-primary"
           (click)="submitEditBudget()"
-          [disabled]="editBudgetLoading || editBudgetForm.allocatedAmount === editBudgetForm.originalAmount || !editBudgetForm.allocatedAmount">
+          [disabled]="editBudgetLoading || editBudgetForm.allocatedAmount === editBudgetForm.originalAmount">
           <span *ngIf="!editBudgetLoading">Save Changes</span>
           <span *ngIf="editBudgetLoading">
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
