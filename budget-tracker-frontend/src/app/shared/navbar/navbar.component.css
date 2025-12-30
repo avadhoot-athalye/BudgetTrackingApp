@@ -30,3 +30,7 @@
 .dropdown-toggle {
   outline: 0;
 }
+
+.dropdown-toggle::after {
+  margin-left: 0.5rem;
+}

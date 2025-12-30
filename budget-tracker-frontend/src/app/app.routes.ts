@@ -9,14 +9,14 @@ export const routes: Routes = [
 	},
 	{
 		path: 'create-budget',
-		loadComponent: () => import('./create-budget/create-budget.component').then(m => m.CreateBudgetComponent)
+		loadComponent: () => import('./budgeting/budgeting.component').then(m => m.BudgetingComponent)
 	},
 	{
 		path: 'expenses',
-		loadComponent: () => import('./expenses/expenses.component').then(m => m.ExpensesComponent)
+		loadComponent: () => import('./expense-details/expense-details.component').then(m => m.ExpenseDetailsComponent)
 	},
 	{
 		path: 'reports',
-		loadComponent: () => import('./reports/reports.component').then(m => m.ReportsComponent)
+		loadComponent: () => import('./budget-reports/budget-reports.component').then(m => m.BudgetReportsComponent)
 	}
 ];

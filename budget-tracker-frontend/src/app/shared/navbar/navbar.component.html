@@ -1,21 +1,40 @@
 <main>
   <div class="container">
     <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
-      <a href="/" class="navbar-brand fw-bold d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-wallet2 me-2" viewBox="0 0 16 16" style="display: inline;">
-        <path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499L12.136.326zM5.562 3H2v10h12V4.5a.5.5 0 0 0-.5-.5H5.562z"/>
-        <path d="M16 12.5v-9a.5.5 0 0 0-.5-.5h-4v5h4.5a.5.5 0 0 1 0 1h-4.5v2h4a.5.5 0 0 0 .5-.5z"/>
-      </svg>
+      <a href="/"
+        class="navbar-brand fw-bold d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-wallet2 me-2"
+          viewBox="0 0 16 16" style="display: inline;">
+          <path
+            d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499L12.136.326zM5.562 3H2v10h12V4.5a.5.5 0 0 0-.5-.5H5.562z" />
+          <path d="M16 12.5v-9a.5.5 0 0 0-.5-.5h-4v5h4.5a.5.5 0 0 1 0 1h-4.5v2h4a.5.5 0 0 0 .5-.5z" />
+        </svg>
         <span class="fs-4">Budget Tracker</span>
       </a>
-
+        
+      <div class="d-flex align-items-center">   
       <ul class="nav nav-pills">
-        <li class="nav-item"><a href="#" class="nav-link active" aria-current="page">Budgeting</a></li>
-        <li class="nav-item"><a href="#" class="nav-link">Expenses</a></li>
-        <li class="nav-item"><a href="#" class="nav-link">Reports</a></li>
-        <li class="nav-item"><a href="#" class="nav-link">Login</a></li>
-        <li class="nav-item"><a href="#" class="nav-link">Sign Up</a></li>
-      </ul>
+        <li class="nav-item"><a routerLink="/budgeting" class="nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Budgeting</a></li>
+        <li class="nav-item"><a routerLink="/expenses" class="nav-link" routerLinkActive="active">Expenses</a></li>
+        <li class="nav-item"><a routerLink="/reports" class="nav-link" routerLinkActive="active">Reports</a></li>
+        <li class="nav-item"><a routerLink="/login" class="nav-link" routerLinkActive="active">Login</a></li>
+        <li class="nav-item"><a routerLink="/signup" class="nav-link" routerLinkActive="active">Sign Up</a></li>
+      </ul> 
+        <div class="flex-shrink-0 dropdown">
+          <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" id="dropdownUser2"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
+          </a>
+          <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
+            <li><a class="dropdown-item" href="#">My Information</a></li>
+            <li><a class="dropdown-item" href="#">Settings</a></li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item" href="#">Sign out</a></li>
+          </ul>
+        </div>
+      </div>
     </header>
   </div>
 </main>
